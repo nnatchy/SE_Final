@@ -17,9 +17,20 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tasks)
 }
 
+// ? get task by id (why not)
+func getTask(w http.ResponseWriter, r *http.Request) {
+	
+}
+
 // TODO: make create task method
 
 func createTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	
 }
+
+// Todo: update a task method
+
+
+// Todo: delete a task method
+
