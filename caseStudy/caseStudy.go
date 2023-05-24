@@ -1,4 +1,4 @@
-package main
+package caseStudy
 
 import (
 	"encoding/json"
