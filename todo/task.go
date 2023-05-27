@@ -1,10 +1,14 @@
 package todo
 
 import (
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
-	"github.com/gorilla/mux"
+
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // ? get all tasks
@@ -23,7 +27,26 @@ import (
 //   '500':
 //     description: Bad Server
 func GetTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json");
+	w.Header().Set("Content-Type", "application/json")
+	collection := Client.Database("test").Collection("tasks")
+
+	var tasks []Task
+	cur, _ := collection.Find(context.Background(), bson.D{})
+
+	for cur.Next(context.Background()) {
+		var task Task
+		err := cur.Decode(&task)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tasks = append(tasks, task)
+	}
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
+	cur.Close(context.Background())
+
 	json.NewEncoder(w).Encode(tasks)
 }
 
@@ -80,13 +103,18 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var newTask Task
 	_ = json.NewDecoder(r.Body).Decode(&newTask)
 
-	// Generate a new random UUID for the task ID
 	newTask.ID = uuid.New().String()
 
-	tasks = append(tasks, newTask)
+	collection := Client.Database("test").Collection("tasks")
+	insertResult, err := collection.InsertOne(context.TODO(), newTask)
 
-	json.NewEncoder(w).Encode(newTask)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(insertResult.InsertedID)
 }
+
 
 // Todo: update a task method
 

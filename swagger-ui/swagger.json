@@ -72,6 +72,17 @@
         ],
         "summary": "Create a new list.",
         "operationId": "CreateList",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List created successfully.",
@@ -288,6 +299,17 @@
         ],
         "summary": "Create a new task.",
         "operationId": "CreateTask",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Task created successfully.",

@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+
+	todo.Init();
 	r := mux.NewRouter()
 
 	// Tasks
