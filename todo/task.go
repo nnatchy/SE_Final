@@ -9,6 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // ? get all tasks
@@ -72,16 +74,27 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 //   '500':
 //     description: Bad Server
 func GetTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json");
-	params := mux.Vars(r);
-	id := params["id"]
-	for _, item := range tasks {
-		if id == item.ID {
-			json.NewEncoder(w).Encode(item)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid Task ID", http.StatusBadRequest)
+		return
+	}
+
+	var task Task
+	var tasksCollection = Client.Database("test").Collection("tasks")
+	err = tasksCollection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&task)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http.Error(w, "No Task Found", http.StatusNotFound)
 			return
 		}
+		http.Error(w, "Server Error", http.StatusInternalServerError)
+		return
 	}
-	http.Error(w, "Invalid Task ID", http.StatusBadRequest);
+
+	json.NewEncoder(w).Encode(task)
 }
 
 // Todo: make create task method

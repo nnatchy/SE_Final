@@ -21,6 +21,7 @@ type List struct {
 
 // global variables for todo package
 var (
+	
 	tasks []Task
 	lists []List
 	Client *mongo.Client
@@ -44,6 +45,6 @@ func Init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	// var tasksCollection = Client.Database("test").Collection("tasks")
 	log.Println("Connected to MongoDB!")
 }
