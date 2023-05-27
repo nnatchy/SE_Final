@@ -42,56 +42,14 @@
     }
   },
   "paths": {
-    "/lists": {
-      "get": {
-        "description": "Get all lists.",
-        "tags": ["lists"],
-        "summary": "Get all lists.",
-        "operationId": "GetLists",
-        "responses": {
-          "200": {
-            "description": "A list of lists.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/List"
-              }
-            }
-          }
-        }
-      }
-    },
     "/list": {
-      "post": {
-        "description": "Creates a new list and returns the created list.",
-        "tags": ["lists"],
-        "summary": "Create a new list.",
-        "operationId": "CreateList",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Task object that needs to be added",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/List"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Task created successfully.",
-            "schema": {
-              "$ref": "#/definitions/List"
-            }
-          }
-        }
-      },
       "put": {
         "description": "Reorders all the lists and returns the reordered lists.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Reorder the lists.",
-        "operationId": "ReOrderLists",
+        "operationId": "reOrderLists",
         "responses": {
           "200": {
             "description": "Lists reordered successfully.",
@@ -101,6 +59,28 @@
                 "$ref": "#/definitions/List"
               }
             }
+          },
+          "500": {
+            "description": "Bad Server"
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new list and returns the created list.",
+        "tags": [
+          "lists"
+        ],
+        "summary": "Create a new list.",
+        "operationId": "CreateList",
+        "responses": {
+          "200": {
+            "description": "List created successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
@@ -108,7 +88,9 @@
     "/list/{id}": {
       "get": {
         "description": "Get a list by id.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Get a list by id.",
         "operationId": "GetList",
         "parameters": [
@@ -129,12 +111,17 @@
           },
           "404": {
             "description": "List not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       },
       "put": {
         "description": "Updates an existing list and returns the updated list.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Update an existing list.",
         "operationId": "UpdateList",
         "parameters": [
@@ -155,12 +142,17 @@
           },
           "404": {
             "description": "List not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       },
       "delete": {
         "description": "Deletes a list and returns the remaining lists.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Delete a list.",
         "operationId": "DeleteList",
         "parameters": [
@@ -184,6 +176,9 @@
           },
           "404": {
             "description": "List not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
@@ -191,9 +186,11 @@
     "/list/{id}/tasks": {
       "put": {
         "description": "Reorders tasks in a list and returns the updated list.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Reorder tasks in a list.",
-        "operationId": "ReOrderTasksInList",
+        "operationId": "reOrderTasksInList",
         "parameters": [
           {
             "type": "string",
@@ -209,6 +206,12 @@
             "schema": {
               "$ref": "#/definitions/List"
             }
+          },
+          "404": {
+            "description": "List not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
@@ -216,9 +219,11 @@
     "/list/{listId}/task/{taskId}": {
       "put": {
         "description": "Moves a task to another list and returns the updated list.",
-        "tags": ["lists"],
+        "tags": [
+          "lists"
+        ],
         "summary": "Move a task to another list.",
-        "operationId": "MoveTask",
+        "operationId": "moveTask",
         "parameters": [
           {
             "type": "string",
@@ -244,25 +249,33 @@
           },
           "404": {
             "description": "List or task not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
     },
-    "/tasks": {
+    "/lists": {
       "get": {
-        "description": "Retrieves all tasks across all lists.",
-        "tags": ["tasks"],
-        "summary": "Retrieve all tasks.",
-        "operationId": "GetTasks",
+        "description": "Get all lists.",
+        "tags": [
+          "lists"
+        ],
+        "summary": "Get all lists.",
+        "operationId": "GetLists",
         "responses": {
           "200": {
-            "description": "A list of tasks.",
+            "description": "A list of lists.",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Task"
+                "$ref": "#/definitions/List"
               }
             }
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
@@ -270,26 +283,20 @@
     "/task": {
       "post": {
         "description": "Creates a new task and returns the created task.",
-        "tags": ["tasks"],
+        "tags": [
+          "tasks"
+        ],
         "summary": "Create a new task.",
         "operationId": "CreateTask",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Task object that needs to be added",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Task"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Task created successfully.",
             "schema": {
               "$ref": "#/definitions/Task"
             }
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
@@ -297,7 +304,9 @@
     "/task/{id}": {
       "get": {
         "description": "Retrieves a specific task by its ID.",
-        "tags": ["tasks"],
+        "tags": [
+          "tasks"
+        ],
         "summary": "Retrieve a task by id.",
         "operationId": "GetTask",
         "parameters": [
@@ -318,12 +327,17 @@
           },
           "404": {
             "description": "Task not found."
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       },
       "put": {
         "description": "Updates an existing task and returns the updated task.",
-        "tags": ["tasks"],
+        "tags": [
+          "tasks"
+        ],
         "summary": "Update an existing task.",
         "operationId": "UpdateTask",
         "parameters": [
@@ -341,12 +355,17 @@
             "schema": {
               "$ref": "#/definitions/Task"
             }
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       },
       "delete": {
         "description": "Deletes a task and returns the remaining tasks.",
-        "tags": ["tasks"],
+        "tags": [
+          "tasks"
+        ],
         "summary": "Delete a task.",
         "operationId": "DeleteTask",
         "parameters": [
@@ -367,6 +386,33 @@
                 "$ref": "#/definitions/Task"
               }
             }
+          },
+          "500": {
+            "description": "Bad Server"
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "description": "Retrieves all tasks across all lists.",
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Retrieve all tasks.",
+        "operationId": "GetTasks",
+        "responses": {
+          "200": {
+            "description": "A list of tasks.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          },
+          "500": {
+            "description": "Bad Server"
           }
         }
       }
