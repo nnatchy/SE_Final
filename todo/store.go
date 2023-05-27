@@ -11,15 +11,16 @@ import (
 
 type Task struct {
 	ID    primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Order int `json: "order"`
+	Order int `json:"order"`
 }
 
 type List struct {
 	ID    primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Title string `json: "task"`
-	Order int    `json: "order"`
-	Tasks []Task `json: "task"`
+	Title string `json:"title"`
+	Order int    `json:"order"`
+	Tasks []Task `json:"tasks"`
 }
+
 
 // global variables for todo package
 var (

@@ -185,7 +185,7 @@ func UpdateList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if res.MatchedCount == 0 {
-		http.Error(w, "No task found", http.StatusNotFound)
+		http.Error(w, "No List found", http.StatusNotFound)
 		return
 	}
 	json.NewEncoder(w).Encode(res)
@@ -380,20 +380,15 @@ func ReOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 	}
 	session.StartTransaction()
 
-	// Update each document in MongoDB.
-	tasksCollection := Client.Database("test").Collection("tasks")
-	for _, task := range newTasks {
-		update := bson.D{
-			{"$set", bson.D{
-				{"order", list.Order},
-			}},
-		}
-		_, err := tasksCollection.UpdateOne(context.Background(), bson.M{"_id": task.ID}, update)
-		if err != nil {
-			http.Error(w, "Failed to update list", http.StatusInternalServerError)
-			return
-		}
-	}
+	// Update tasks in wantedList
+
+	updateTasks := bson.D{{"$set", bson.D{{"tasks", newTasks}}}}
+	_, err = listCollections.UpdateOne(context.Background(), bson.M{"_id": list.ID}, updateTasks)
+    if err != nil {
+        http.Error(w, "Failed to update current list", http.StatusInternalServerError)
+        session.AbortTransaction(context.Background())
+        return
+    }
 
 	// Commit the transaction.
 	err = session.CommitTransaction(context.Background())
