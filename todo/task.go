@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -116,8 +114,6 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var newTask Task
 	_ = json.NewDecoder(r.Body).Decode(&newTask)
 
-	newTask.ID = uuid.New().String()
-
 	collection := Client.Database("test").Collection("tasks")
 	insertResult, err := collection.InsertOne(context.TODO(), newTask)
 
@@ -151,18 +147,33 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	params := mux.Vars(r);
-	id := params["id"]
-	for idx, item := range tasks {
-		if id == item.ID {
-			tasks = append(tasks[:idx], tasks[idx + 1:]...)
-			var newTask Task
-			_ = json.NewDecoder(r.Body).Decode(&newTask)
-			newTask.ID = item.ID
-			tasks = append(tasks, newTask)
-			json.NewEncoder(w).Encode(newTask)
-			return;
-		}
+	id, err := primitive.ObjectIDFromHex(params["id"]);
+	if (err != nil) {
+		http.Error(w, "Invalid ID", http.StatusBadRequest);
+		return;
 	}
+	var task Task;
+	var tasksCollection = Client.Database("test").Collection("tasks")
+	err = json.NewDecoder(r.Body).Decode(&task);
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest);
+		return;
+	}
+	updatedTask := bson.D {
+		{"$set", bson.D{
+			{"order", task.Order},
+		}},
+	}
+	res, err := tasksCollection.UpdateOne(context.Background(), bson.M{"_id": id}, updatedTask);
+	if (err != nil) {
+		http.Error(w, "Server Error", http.StatusInternalServerError);
+		return;
+	}
+	if (res.MatchedCount == 0) {
+		http.Error(w, "No task found", http.StatusNotFound);
+		return;
+	}
+	json.NewEncoder(w).Encode(res);
 }
 
 // Todo: delete a task method
@@ -188,16 +199,25 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 //     description: Bad Server
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r);
-	id := params["id"]
-	for idx, item := range tasks {
-		if id == item.ID {
-			tasks = append(tasks[:idx], tasks[idx + 1:]...)
-			json.NewEncoder(w).Encode(tasks)
-			break
-		}
+	params := mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+	if err != nil {
+		http.Error(w, "Invalid Task ID", http.StatusBadRequest)
+		return
 	}
-	http.Error(w, "Invalid ID", http.StatusBadRequest)
+	var tasksCollection = Client.Database("test").Collection("tasks")
+	res, err := tasksCollection.DeleteOne(context.Background(), bson.M{"_id": id})
+	if err != nil {
+		http.Error(w, "Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if res.DeletedCount == 0 {
+		http.Error(w, "No task found", http.StatusNotFound);
+		return;
+	}
+
+	json.NewEncoder(w).Encode(res)
 }
 
 

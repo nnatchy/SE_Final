@@ -8,7 +8,6 @@ import (
 )
 
 type Task struct {
-	ID string `json: "id"`
 	Order int `json: "order"`
 }
 
