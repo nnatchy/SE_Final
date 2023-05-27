@@ -351,7 +351,7 @@
         "operationId": "DeleteTask",
         "parameters": [
           {
-            "type": "integer",
+            "type": "string",
             "description": "ID of the task to delete.",
             "name": "id",
             "in": "path",

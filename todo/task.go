@@ -7,13 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Task struct {
-	ID string `json: "id"`
-	Order int `json: "order"`
-}
-
-var tasks []Task
-
 // ? get all tasks
 
 // swagger:operation GET /tasks tasks GetTasks
@@ -27,6 +20,8 @@ var tasks []Task
 //       type: array
 //       items:
 //         "$ref": "#/definitions/Task"
+//   '500':
+//     description: Bad Server
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	json.NewEncoder(w).Encode(tasks)
@@ -51,6 +46,8 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/Task"
 //   '404':
 //     description: Task not found.
+//   '500':
+//     description: Bad Server
 func GetTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	params := mux.Vars(r);
@@ -75,6 +72,8 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 //     description: Task created successfully.
 //     schema:
 //       "$ref": "#/definitions/Task"
+//   '500':
+//     description: Bad Server
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -106,6 +105,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 //     description: Task updated successfully.
 //     schema:
 //       "$ref": "#/definitions/Task"
+//   '500':
+//     description: Bad Server
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	params := mux.Vars(r);
@@ -134,7 +135,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 //   in: path
 //   description: ID of the task to delete.
 //   required: true
-//   type: integer
+//   type: string
 // responses:
 //   '200':
 //     description: Task deleted successfully.
@@ -142,6 +143,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 //       type: array
 //       items:
 //         "$ref": "#/definitions/Task"
+//   '500':
+//     description: Bad Server
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r);
@@ -149,10 +152,11 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	for idx, item := range tasks {
 		if id == item.ID {
 			tasks = append(tasks[:idx], tasks[idx + 1:]...)
+			json.NewEncoder(w).Encode(tasks)
 			break
 		}
 	}
-	json.NewEncoder(w).Encode(tasks)
+	http.Error(w, "Invalid ID", http.StatusBadRequest)
 }
 
 

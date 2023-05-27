@@ -8,15 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type List struct {
-	ID    string `json: "id"`
-	Title string `json: "task"`
-	Order int    `json: "order"`
-	Tasks []Task `json: "task"`
-}
-
-var lists []List
-
 // ? get all lists
 
 // swagger:operation GET /lists lists GetLists
@@ -30,6 +21,8 @@ var lists []List
 //       type: array
 //       items:
 //         "$ref": "#/definitions/List"
+//   '500':
+//     description: Bad Server
 func GetLists(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(lists)
@@ -54,6 +47,8 @@ func GetLists(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/List"
 //   '404':
 //     description: List not found.
+//   '500':
+//     description: Bad Server
 func GetList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -79,19 +74,19 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 //     description: List created successfully.
 //     schema:
 //       "$ref": "#/definitions/List"
+//   '500':
+//     description: Bad Server
 func CreateList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var newList List
 	_ = json.NewDecoder(r.Body).Decode(&newList)
 
-	// Generate a new random UUID for the list ID
 	newList.ID = uuid.New().String()
 
-	// Generate new random UUIDs for each task in the list
 	for i := range newList.Tasks {
 		newList.Tasks[i].ID = uuid.New().String()
-		tasks = append(tasks, newList.Tasks[i])  // Append the tasks to global tasks
+		tasks = append(tasks, newList.Tasks[i])  // append the tasks to global tasks
 	}
 
 	lists = append(lists, newList)
@@ -118,6 +113,8 @@ func CreateList(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/List"
 //   '404':
 //     description: List not found.
+//   '500':
+//     description: Bad Server
 func UpdateList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -160,6 +157,8 @@ func UpdateList(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/List"
 //   '404':
 //     description: List or task not found.
+//   '500':
+//     description: Bad Server
 func MoveTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -238,6 +237,10 @@ func ReOrderTasks(reOrderedTasks []Task) []Task {
 //     description: Tasks reordered successfully.
 //     schema:
 //       "$ref": "#/definitions/List"
+//   '404':
+//     description: List not found.
+//   '500':
+//     description: Bad Server
 func ReOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -251,6 +254,7 @@ func ReOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+	http.Error(w, "List not Found !", http.StatusNotFound)
 }
 
 // Todo: reorder a list
@@ -266,6 +270,8 @@ func ReOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 //       type: array
 //       items:
 //         "$ref": "#/definitions/List"
+//   '500':
+//     description: Bad Server
 func ReOrderLists(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	sort.Slice(lists, func(i, j int) bool {
@@ -296,6 +302,8 @@ func ReOrderLists(w http.ResponseWriter, r *http.Request) {
 //         "$ref": "#/definitions/List"
 //   '404':
 //     description: List not found.
+//   '500':
+//     description: Bad Server
 func DeleteList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
