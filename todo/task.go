@@ -9,24 +9,28 @@ import (
 
 type Task struct {
 	ID int `json: "id"`
-	Order string `json: "order"`
+	Order int `json: "order"`
 }
 
 var tasks []Task
 
-// ? get all tasks (why not)
+// ? get all tasks
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	json.NewEncoder(w).Encode(tasks)
 }
 
-// ? get task by id (why not)
+// ? get task by id 
 func GetTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
-	params := mux.Vars(r)
+	params := mux.Vars(r);
+	id, err := strconv.Atoi(params["id"]);
+	if (err != nil) {
+		http.Error(w, "Invalid ID", http.StatusBadRequest);
+		return;
+	}
 	for _, item := range tasks {
-		item.ID, _ = strconv.Atoi(params["id"]);
-		if item.ID == item.ID {
+		if id == item.ID {
 			json.NewEncoder(w).Encode(item)
 			return
 		}
@@ -51,9 +55,13 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json");
 	params := mux.Vars(r);
-
+	id, err := strconv.Atoi(params["id"]);
+	if (err != nil) {
+		http.Error(w, "Invalid ID", http.StatusBadRequest);
+		return;
+	}
 	for idx, item := range tasks {
-		if item.ID, _ = strconv.Atoi(params["id"]); item.ID == item.ID {
+		if id == item.ID {
 			tasks = append(tasks[:idx], tasks[idx + 1:]...)
 			var newTask Task
 			_ = json.NewDecoder(r.Body).Decode(&newTask)
@@ -69,10 +77,14 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r);
+	id, err := strconv.Atoi(params["id"]);
+	if (err != nil) {
+		http.Error(w, "Invalid ID", http.StatusBadRequest);
+		return;
+	}
 	for idx, item := range tasks {
-		if item.ID, _ = strconv.Atoi(params["id"]); item.ID == item.ID {
+		if id == item.ID {
 			tasks = append(tasks[:idx], tasks[idx + 1:]...)
 			break
 		}
