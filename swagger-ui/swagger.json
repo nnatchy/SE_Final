@@ -1,0 +1,353 @@
+{
+  "swagger": "2.0",
+  "definitions": {
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the task"
+        },
+        "order": {
+          "type": "integer",
+          "description": "The order of the task in the list"
+        }
+      },
+      "required": ["id", "order"]
+    },
+    "List": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the list"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the list"
+        },
+        "order": {
+          "type": "integer",
+          "description": "The order of the list"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Task"
+          },
+          "description": "The tasks in the list"
+        }
+      },
+      "required": ["id", "title", "order", "tasks"]
+    }
+  },
+  "paths": {
+    "/list": {
+      "put": {
+        "description": "Reorders all the lists and returns the reordered lists.",
+        "tags": ["lists"],
+        "summary": "Reorder the lists.",
+        "operationId": "reOrderLists",
+        "responses": {
+          "200": {
+            "description": "Lists reordered successfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a new list and returns the created list.",
+        "tags": ["lists"],
+        "summary": "Create a new list.",
+        "operationId": "CreateList",
+        "responses": {
+          "200": {
+            "description": "List created successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          }
+        }
+      }
+    },
+    "/list/{id}": {
+      "get": {
+        "description": "Get a list by id.",
+        "tags": ["lists"],
+        "summary": "Get a list by id.",
+        "operationId": "GetList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the list to retrieve.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single list.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "description": "List not found."
+          }
+        }
+      },
+      "put": {
+        "description": "Updates an existing list and returns the updated list.",
+        "tags": ["lists"],
+        "summary": "Update an existing list.",
+        "operationId": "UpdateList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the list to update.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List updated successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "description": "List not found."
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a list and returns the remaining lists.",
+        "tags": ["lists"],
+        "summary": "Delete a list.",
+        "operationId": "DeleteList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the list to delete.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List deleted successfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
+            }
+          },
+          "404": {
+            "description": "List not found."
+          }
+        }
+      }
+    },
+    "/list/{id}/tasks": {
+      "put": {
+        "description": "Reorders tasks in a list and returns the updated list.",
+        "tags": ["lists"],
+        "summary": "Reorder tasks in a list.",
+        "operationId": "reOrderTasksInList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the list whose tasks need to be reordered.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tasks reordered successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          }
+        }
+      }
+    },
+    "/list/{listId}/task/{taskId}": {
+      "put": {
+        "description": "Moves a task to another list and returns the updated list.",
+        "tags": ["lists"],
+        "summary": "Move a task to another list.",
+        "operationId": "moveTask",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the destination list.",
+            "name": "destinationListId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "ID of the task to move.",
+            "name": "taskId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task moved successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          },
+          "404": {
+            "description": "List or task not found."
+          }
+        }
+      }
+    },
+    "/lists": {
+      "get": {
+        "description": "Get all lists.",
+        "tags": ["lists"],
+        "summary": "Get all lists.",
+        "operationId": "GetLists",
+        "responses": {
+          "200": {
+            "description": "A list of lists.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task": {
+      "post": {
+        "description": "Creates a new task and returns the created task.",
+        "tags": ["tasks"],
+        "summary": "Create a new task.",
+        "operationId": "CreateTask",
+        "responses": {
+          "200": {
+            "description": "Task created successfully.",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        }
+      }
+    },
+    "/task/{id}": {
+      "get": {
+        "description": "Retrieves a specific task by its ID.",
+        "tags": ["tasks"],
+        "summary": "Retrieve a task by id.",
+        "operationId": "GetTask",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the task to retrieve.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single task.",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "404": {
+            "description": "Task not found."
+          }
+        }
+      },
+      "put": {
+        "description": "Updates an existing task and returns the updated task.",
+        "tags": ["tasks"],
+        "summary": "Update an existing task.",
+        "operationId": "UpdateTask",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of the task to update.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task updated successfully.",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a task and returns the remaining tasks.",
+        "tags": ["tasks"],
+        "summary": "Delete a task.",
+        "operationId": "DeleteTask",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "ID of the task to delete.",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task deleted successfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "description": "Retrieves all tasks across all lists.",
+        "tags": ["tasks"],
+        "summary": "Retrieve all tasks.",
+        "operationId": "GetTasks",
+        "responses": {
+          "200": {
+            "description": "A list of tasks.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

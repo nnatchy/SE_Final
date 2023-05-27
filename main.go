@@ -18,6 +18,8 @@ func main() {
 	r.HandleFunc("/tasks/{id}", todo.UpdateTask).Methods("PUT")
 	r.HandleFunc("/tasks/{id}", todo.DeleteTask).Methods("DELETE")
 
+	r.PathPrefix("/swagger-ui/").Handler(http.StripPrefix("/swagger-ui/", http.FileServer(http.Dir("./swagger-ui/"))))
+	
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
