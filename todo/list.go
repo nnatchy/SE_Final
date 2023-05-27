@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"sort"
+	"github.com/google/uuid"
 )
 
 type List struct {
@@ -64,7 +65,7 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	json.NewEncoder(w).Encode(&Task{})
+	http.Error(w, "Invalid ID", http.StatusBadRequest);
 }
 
 // Todo: make create list method
@@ -80,9 +81,19 @@ func GetList(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/List"
 func CreateList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var newList List
 
+	var newList List
 	_ = json.NewDecoder(r.Body).Decode(&newList)
+
+	// Generate a new random UUID for the list ID
+	newList.ID = uuid.New().String()
+
+	// Generate new random UUIDs for each task in the list
+	for i := range newList.Tasks {
+		newList.Tasks[i].ID = uuid.New().String()
+		tasks = append(tasks, newList.Tasks[i])  // Append the tasks to global tasks
+	}
+
 	lists = append(lists, newList)
 
 	json.NewEncoder(w).Encode(newList)
@@ -149,7 +160,7 @@ func UpdateList(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/List"
 //   '404':
 //     description: List or task not found.
-func moveTask(w http.ResponseWriter, r *http.Request) {
+func MoveTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 
@@ -204,7 +215,7 @@ func moveTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // Todo: reorder tasks in list
-func reOrderTasks(reOrderedTasks []Task) []Task {
+func ReOrderTasks(reOrderedTasks []Task) []Task {
 
 	sort.Slice(reOrderedTasks, func(i, j int) bool {
 		return reOrderedTasks[i].Order < reOrderedTasks[j].Order
@@ -227,14 +238,14 @@ func reOrderTasks(reOrderedTasks []Task) []Task {
 //     description: Tasks reordered successfully.
 //     schema:
 //       "$ref": "#/definitions/List"
-func reOrderTasksInList(w http.ResponseWriter, r *http.Request) {
+func ReOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id := params["id"]
 	for _, list := range lists {
 		if id == list.ID { // find wantedList
 			var reOrderedTasks []Task
-			reOrderedTasks = reOrderTasks(list.Tasks)
+			reOrderedTasks = ReOrderTasks(list.Tasks)
 			list.Tasks = reOrderedTasks
 			json.NewEncoder(w).Encode(list)
 			break
@@ -255,7 +266,7 @@ func reOrderTasksInList(w http.ResponseWriter, r *http.Request) {
 //       type: array
 //       items:
 //         "$ref": "#/definitions/List"
-func reOrderLists(w http.ResponseWriter, r *http.Request) {
+func ReOrderLists(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	sort.Slice(lists, func(i, j int) bool {
 		return lists[i].Order < lists[j].Order

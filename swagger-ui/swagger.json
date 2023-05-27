@@ -42,15 +42,15 @@
     }
   },
   "paths": {
-    "/list": {
-      "put": {
-        "description": "Reorders all the lists and returns the reordered lists.",
+    "/lists": {
+      "get": {
+        "description": "Get all lists.",
         "tags": ["lists"],
-        "summary": "Reorder the lists.",
-        "operationId": "reOrderLists",
+        "summary": "Get all lists.",
+        "operationId": "GetLists",
         "responses": {
           "200": {
-            "description": "Lists reordered successfully.",
+            "description": "A list of lists.",
             "schema": {
               "type": "array",
               "items": {
@@ -59,17 +59,47 @@
             }
           }
         }
-      },
+      }
+    },
+    "/list": {
       "post": {
         "description": "Creates a new list and returns the created list.",
         "tags": ["lists"],
         "summary": "Create a new list.",
         "operationId": "CreateList",
-        "responses": {
-          "200": {
-            "description": "List created successfully.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object that needs to be added",
+            "required": true,
             "schema": {
               "$ref": "#/definitions/List"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task created successfully.",
+            "schema": {
+              "$ref": "#/definitions/List"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Reorders all the lists and returns the reordered lists.",
+        "tags": ["lists"],
+        "summary": "Reorder the lists.",
+        "operationId": "ReOrderLists",
+        "responses": {
+          "200": {
+            "description": "Lists reordered successfully.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/List"
+              }
             }
           }
         }
@@ -163,7 +193,7 @@
         "description": "Reorders tasks in a list and returns the updated list.",
         "tags": ["lists"],
         "summary": "Reorder tasks in a list.",
-        "operationId": "reOrderTasksInList",
+        "operationId": "ReOrderTasksInList",
         "parameters": [
           {
             "type": "string",
@@ -188,7 +218,7 @@
         "description": "Moves a task to another list and returns the updated list.",
         "tags": ["lists"],
         "summary": "Move a task to another list.",
-        "operationId": "moveTask",
+        "operationId": "MoveTask",
         "parameters": [
           {
             "type": "string",
@@ -218,19 +248,19 @@
         }
       }
     },
-    "/lists": {
+    "/tasks": {
       "get": {
-        "description": "Get all lists.",
-        "tags": ["lists"],
-        "summary": "Get all lists.",
-        "operationId": "GetLists",
+        "description": "Retrieves all tasks across all lists.",
+        "tags": ["tasks"],
+        "summary": "Retrieve all tasks.",
+        "operationId": "GetTasks",
         "responses": {
           "200": {
-            "description": "A list of lists.",
+            "description": "A list of tasks.",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/List"
+                "$ref": "#/definitions/Task"
               }
             }
           }
@@ -243,6 +273,17 @@
         "tags": ["tasks"],
         "summary": "Create a new task.",
         "operationId": "CreateTask",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Task object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Task created successfully.",
@@ -320,25 +361,6 @@
         "responses": {
           "200": {
             "description": "Task deleted successfully.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Task"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tasks": {
-      "get": {
-        "description": "Retrieves all tasks across all lists.",
-        "tags": ["tasks"],
-        "summary": "Retrieve all tasks.",
-        "operationId": "GetTasks",
-        "responses": {
-          "200": {
-            "description": "A list of tasks.",
             "schema": {
               "type": "array",
               "items": {

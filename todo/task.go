@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"github.com/gorilla/mux"
+	"github.com/google/uuid"
 )
 
 type Task struct {
@@ -76,9 +77,13 @@ func GetTask(w http.ResponseWriter, r *http.Request) {
 //       "$ref": "#/definitions/Task"
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var newTask Task;
-	
+
+	var newTask Task
 	_ = json.NewDecoder(r.Body).Decode(&newTask)
+
+	// Generate a new random UUID for the task ID
+	newTask.ID = uuid.New().String()
+
 	tasks = append(tasks, newTask)
 
 	json.NewEncoder(w).Encode(newTask)
