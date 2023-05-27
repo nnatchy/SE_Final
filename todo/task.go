@@ -201,18 +201,18 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, err := primitive.ObjectIDFromHex(params["id"])
-	if err != nil {
-		http.Error(w, "Invalid Task ID", http.StatusBadRequest)
-		return
+	if (err != nil) {
+		http.Error(w, "Invalid Task ID", http.StatusBadRequest);
+		return;
 	}
 	var tasksCollection = Client.Database("test").Collection("tasks")
 	res, err := tasksCollection.DeleteOne(context.Background(), bson.M{"_id": id})
-	if err != nil {
-		http.Error(w, "Server Error", http.StatusInternalServerError)
-		return
+	if (err != nil) {
+		http.Error(w, "Server Error", http.StatusInternalServerError);
+		return;
 	}
 
-	if res.DeletedCount == 0 {
+	if (res.DeletedCount == 0) {
 		http.Error(w, "No task found", http.StatusNotFound);
 		return;
 	}

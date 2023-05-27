@@ -3,16 +3,19 @@ package todo
 import (
 	"context"
 	"log"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Task struct {
+	ID    primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Order int `json: "order"`
 }
 
 type List struct {
-	ID    string `json: "id"`
+	ID    primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Title string `json: "task"`
 	Order int    `json: "order"`
 	Tasks []Task `json: "task"`
@@ -20,9 +23,6 @@ type List struct {
 
 // global variables for todo package
 var (
-	
-	tasks []Task
-	lists []List
 	Client *mongo.Client
 )
 
