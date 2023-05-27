@@ -112,16 +112,22 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var newTask Task
-	_ = json.NewDecoder(r.Body).Decode(&newTask)
+	err := json.NewDecoder(r.Body).Decode(&newTask)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	collection := Client.Database("test").Collection("tasks")
 	insertResult, err := collection.InsertOne(context.TODO(), newTask)
 
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	json.NewEncoder(w).Encode(insertResult.InsertedID)
+	newTask.ID = insertResult.InsertedID.(primitive.ObjectID)
+	json.NewEncoder(w).Encode(newTask)
 }
 
 

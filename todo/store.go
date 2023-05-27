@@ -22,7 +22,6 @@ type List struct {
 }
 
 
-
 // global variables for todo package
 var (
 	Client *mongo.Client

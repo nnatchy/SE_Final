@@ -6,39 +6,42 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "The ID of the task"
+          "description": "The unique identifier of the task",
+          "example": "60d5ecf204b2f237841312ec"
         },
         "order": {
           "type": "integer",
-          "description": "The order of the task in the list"
+          "description": "The order of the task",
+          "example": 1
         }
-      },
-      "required": ["id", "order"]
+      }
     },
     "List": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
-          "description": "The ID of the list"
+          "description": "The unique identifier of the list",
+          "example": "60d5ecf204b2f237841312ed"
         },
         "title": {
           "type": "string",
-          "description": "The title of the list"
+          "description": "The title of the list",
+          "example": "My List"
         },
         "order": {
           "type": "integer",
-          "description": "The order of the list"
+          "description": "The order of the list",
+          "example": 1
         },
         "tasks": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Task"
           },
-          "description": "The tasks in the list"
+          "description": "The tasks contained in the list"
         }
-      },
-      "required": ["id", "title", "order", "tasks"]
+      }
     }
   },
   "paths": {
